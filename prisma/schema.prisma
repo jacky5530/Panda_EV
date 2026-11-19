@@ -1,0 +1,46 @@
+// Panda EV — intern practice database (fake data only).
+//
+// Week 3 task: add Wallet and WalletTransaction (see README). Week 4: add
+// ChargingSession. Station and Connector are given as examples.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Station {
+  id         String      @id @default(uuid()) @db.Uuid
+  name       String      @db.VarChar(255)
+  address    String?     @db.VarChar(500)
+  latitude   Decimal     @db.Decimal(10, 7)
+  longitude  Decimal     @db.Decimal(10, 7)
+  createdAt  DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt  DateTime    @updatedAt @map("updated_at") @db.Timestamptz(6)
+  connectors Connector[]
+
+  @@map("stations")
+}
+
+enum ConnectorStatus {
+  AVAILABLE
+  CHARGING
+  FAULTED
+  UNAVAILABLE
+}
+
+model Connector {
+  id         String          @id @default(uuid()) @db.Uuid
+  stationId  String          @map("station_id") @db.Uuid
+  chargerId  String          @map("charger_id") @db.VarChar(50) // e.g. "FAKE-KM7-01"
+  number     Int // 1 or 2
+  maxPowerKw Int             @map("max_power_kw")
+  status     ConnectorStatus @default(AVAILABLE)
+  station    Station         @relation(fields: [stationId], references: [id], onDelete: Cascade)
+
+  @@unique([chargerId, number])
+  @@map("connectors")
+}

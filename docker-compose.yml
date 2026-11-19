@@ -1,0 +1,22 @@
+# Local practice services. Ports are shifted (5433/6380/5673) so they never
+# clash with anything else on your computer.
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: intern
+      POSTGRES_PASSWORD: intern
+      POSTGRES_DB: panda_intern
+    ports: ["5433:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+  redis:
+    image: redis:7
+    ports: ["6380:6379"]
+  rabbitmq:
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_DEFAULT_USER: intern
+      RABBITMQ_DEFAULT_PASS: intern
+    ports: ["5673:5672", "15673:15672"]   # UI: http://localhost:15673 (intern / intern)
+volumes:
+  pgdata:
