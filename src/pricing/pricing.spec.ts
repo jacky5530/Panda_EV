@@ -1,7 +1,7 @@
 import { calcChargeCost, maxKwhForBalance } from './pricing';
 
-// WEEK 1: change `describe` to `describe`, run `npm test`, make it green.
-describe.skip('calcChargeCost', () => {
+// WEEK 1: change `describe.skip` to `describe`, run `npm test`, make it green.
+describe('calcChargeCost', () => {
   it('10 kWh at 2,900 LAK + 10 % VAT', () => {
     expect(calcChargeCost(10, 2900)).toEqual({
       energyCost: 29000,
@@ -24,7 +24,7 @@ describe.skip('calcChargeCost', () => {
   });
 });
 
-describe.skip('maxKwhForBalance', () => {
+describe('maxKwhForBalance', () => {
   it('100,000 LAK at 2,900 + 10 % VAT', () => {
     expect(maxKwhForBalance(100000, 2900)).toBe(31.347);
   });
