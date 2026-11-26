@@ -20,10 +20,12 @@ export function calcChargeCost(
   pricePerKwh: number,
   vatPct = 10,
 ): ChargeCost {
-  // TODO(week 1): replace this line
-  throw new Error(
-    `not implemented: calcChargeCost(${kwh}, ${pricePerKwh}, ${vatPct})`,
-  );
+  if (kwh < 0) throw new Error('kwh must be >= 0');
+
+  const energyCost = Math.round(kwh * pricePerKwh);
+  const vatAmount = Math.round((energyCost * vatPct) / 100);
+
+  return { energyCost, vatAmount, total: energyCost + vatAmount };
 }
 
 /**
@@ -35,8 +37,16 @@ export function maxKwhForBalance(
   pricePerKwh: number,
   vatPct = 10,
 ): number {
-  // TODO(week 1)
-  throw new Error(
-    `not implemented: maxKwhForBalance(${balance}, ${pricePerKwh}, ${vatPct})`,
-  );
+  if (balance <= 0) return 0;
+
+  const raw = balance / (pricePerKwh * (1 + vatPct / 100));
+  let kwh = Math.floor(raw * 1000) / 1000;
+
+  // The rounding inside calcChargeCost can push the total over the balance,
+  // so step down by 0.001 kWh until it fits.
+  while (kwh > 0 && calcChargeCost(kwh, pricePerKwh, vatPct).total > balance) {
+    kwh = Math.round((kwh - 0.001) * 1000) / 1000;
+  }
+
+  return kwh;
 }
